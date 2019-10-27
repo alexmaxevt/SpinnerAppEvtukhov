@@ -1,5 +1,6 @@
 package ru.evtukhov.android.spinnerapp;
 
+import androidx.annotation.IntDef;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,10 +29,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        mCountriesSpinner = (Spinner) findViewById(R.id.countriesSpinner);
-        mCitiesSpinner = (Spinner) findViewById(R.id.citiesSpinner);
-        mHouseNumberSpinner = (Spinner) findViewById(R.id.houseNumberSpinner);
-        mShowAddressBtn = (Button) findViewById(R.id.showAddress);
+        mCountriesSpinner = findViewById(R.id.countriesSpinner);
+        mCitiesSpinner = findViewById(R.id.citiesSpinner);
+        mHouseNumberSpinner = findViewById(R.id.houseNumberSpinner);
+        mShowAddressBtn = findViewById(R.id.showAddress);
         initSpinnerCountries();
         initHousNumbersSpinner();
         mShowAddressBtn.setOnClickListener(new View.OnClickListener() {
@@ -54,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mCountriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String[] countries = getResources().getStringArray(R.array.countries);
-                initSpinnerCities(countries[i]);
+                initSpinnerCities(i);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -72,16 +75,24 @@ public class MainActivity extends AppCompatActivity {
         mHouseNumberSpinner.setAdapter(adapter);
     }
 
-    private void initSpinnerCities(String country) {
+    @IntDef({Country.RUSSIA, Country.UKRAINE, Country.BELARUS})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Country {
+        int RUSSIA = 0;
+        int UKRAINE = 1;
+        int BELARUS = 2;
+    }
+
+    private void initSpinnerCities(int country) {
         ArrayAdapter<CharSequence> adapter = null;
         switch (country) {
-            case "Россия":
+            case Country.RUSSIA:
                 adapter = ArrayAdapter.createFromResource(this, R.array.r_cities, android.R.layout.simple_spinner_item);
                 break;
-            case "Украина":
+            case Country.UKRAINE:
                 adapter = ArrayAdapter.createFromResource(this, R.array.u_cities, android.R.layout.simple_spinner_item);
                 break;
-            case "Белоруссия":
+            case Country.BELARUS:
                 adapter = ArrayAdapter.createFromResource(this, R.array.b_cities, android.R.layout.simple_spinner_item);
                 break;
         }
